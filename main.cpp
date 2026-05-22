@@ -34,22 +34,19 @@ int main(int argc, char** argv){
         exit(1);
     }
   
-    // Create an object of a STL data-structure to store all the movies
+    MovieDatabase db;
 
     string line, movieName;
     double movieRating;
     // Read each file and store the name and rating
     while (getline (movieFile, line) && parseLine(line, movieName, movieRating)){
-            // Use std::string movieName and double movieRating
-            // to construct your Movie objects
-            // cout << movieName << " has rating " << movieRating << endl;
-            // insert elements into your data structure
+	db.addMovie(movieName, movieRating);
     }
 
     movieFile.close();
 
     if (argc == 2){
-            //print all the movies in ascending alphabetical order of movie names
+            db.printAllAlphabetically();
             return 0;
     }
 
@@ -59,26 +56,26 @@ int main(int argc, char** argv){
         cerr << "Could not open file " << argv[2];
         exit(1);
     }
-
     vector<string> prefixes;
-    while (getline (prefixFile, line)) {
+
+    while (getline(prefixFile, line)) {
         if (!line.empty()) {
             prefixes.push_back(line);
         }
     }
+    vector<string> bestMoviesResults;
 
-    //  For each prefix,
-    //  Find all movies that have that prefix and store them in an appropriate data structure
-    //  If no movie with that prefix exists print the following message
-    cout << "No movies found with prefix "<<"<replace with prefix>" << endl;
+    for (size_t i = 0; i < prefixes.size(); ++i) {
+        db.processPrefix(prefixes[i], bestMoviesResults);
+    }
 
-    //  For each prefix,
-    //  Print the highest rated movie with that prefix if it exists.
-    cout << "Best movie with prefix " << "<replace with prefix>" << " is: " << "replace with movie name" << " with rating " << std::fixed << std::setprecision(1) << "replace with movie rating" << endl;
-
-    return 0;
+    for (size_t i = 0; i < prefixes.size(); ++i) {
+        if (bestMoviesResults[i] != "") {
+            cout << "Best movie with prefix " << prefixes[i]
+                 << " is: " << bestMoviesResults[i] << endl;
+	}
+    }
 }
-
 /* Add your run time analysis for part 3 of the assignment here as commented block*/
 
 bool parseLine(string &line, string &movieName, double &movieRating) {
