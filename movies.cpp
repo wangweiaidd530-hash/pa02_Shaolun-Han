@@ -1,17 +1,19 @@
 #include "movies.h"
 #include <iostream>
 #include <algorithm>
-
+#include <iomanip>
+#include <sstream>
 void MovieDatabase::addMovie(const std::string& name, double rating) {
     movieMap[name] = rating;
 }
 
 void MovieDatabase::printAllAlphabetically() const {
     for (auto it = movieMap.begin(); it != movieMap.end(); ++it) {
-        std::cout << it->first << ", " << it->second << "\n";
+        std::cout << it->first << ", "
+                  << std::fixed << std::setprecision(1)
+                  << it->second << "\n";
     }
 }
-
 void MovieDatabase::processPrefix(const std::string& prefix, 
                                   std::vector<std::string>& bestMoviesResults) const {
     auto it = movieMap.lower_bound(prefix);
@@ -39,10 +41,16 @@ void MovieDatabase::processPrefix(const std::string& prefix,
         std::sort(matchedMovies.begin(), matchedMovies.end());
 
         for (size_t i = 0; i < matchedMovies.size(); ++i) {
-            std::cout << matchedMovies[i].name << ", " << matchedMovies[i].rating << "\n";
+	    std::cout << matchedMovies[i].name << ", "
+          << std::fixed << std::setprecision(1)
+          << matchedMovies[i].rating << "\n";
         }
         std::cout << "\n"; 
+        std::ostringstream oss;
+    oss << matchedMovies[0].name << " with rating "
+        << std::fixed << std::setprecision(1)
+        << matchedMovies[0].rating;
 
-        bestMoviesResults.push_back(matchedMovies[0].name + " with rating " + std::to_string(matchedMovies[0].rating).substr(0, 3));
+    bestMoviesResults.push_back(oss.str());
     }
 }
